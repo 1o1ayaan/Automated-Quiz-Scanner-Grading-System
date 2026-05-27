@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Quiz Scanner — SP 2026</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>Automated Quiz Scanner &amp; Grading</h1>
+      <p class="subtitle">Artificial Intelligence · BSE-4A · SP 2026</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card upload-section">
+      <h2>Scan Quiz Sheet</h2>
+      <p>Upload a scanned quiz (JPG, PNG, or PDF). The system decodes the QR answer key, reads bubbles, extracts student info, and grades automatically.</p>
+
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="single">Single Sheet</button>
+        <button type="button" class="tab" data-tab="batch">Batch Upload</button>
+      </div>
+
+      <div id="panel-single" class="panel active">
+        <label class="file-drop" id="drop-single">
+          <input type="file" id="file-single" accept=".jpg,.jpeg,.png,.pdf,.bmp,.webp" />
+          <span>Drop quiz image here or click to browse</span>
+        </label>
+        <button type="button" id="btn-scan" class="btn primary" disabled>Scan &amp; Grade</button>
+      </div>
+
+      <div id="panel-batch" class="panel hidden">
+        <label class="file-drop" id="drop-batch">
+          <input type="file" id="file-batch" accept=".jpg,.jpeg,.png,.pdf" multiple />
+          <span>Drop multiple quiz images (5+ recommended)</span>
+        </label>
+        <button type="button" id="btn-batch" class="btn primary" disabled>Process Batch → Excel</button>
+      </div>
+
+      <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Processing… OCR and bubble detection may take 30–60 seconds on first run.</p>
+      </div>
+      <div id="error" class="alert error hidden"></div>
+    </section>
+
+    <section id="results" class="results hidden">
+      <div class="card">
+        <h2>Student Information</h2>
+        <div class="info-grid" id="student-info"></div>
+      </div>
+
+      <div class="card">
+        <h2>Answer Key <span class="badge" id="set-badge"></span></h2>
+        <div class="dual-grid" id="answer-key"></div>
+      </div>
+
+      <div class="card">
+        <h2>Student Answers</h2>
+        <div class="dual-grid" id="student-answers"></div>
+      </div>
+
+      <div class="card score-card">
+        <h2>Grade Report</h2>
+        <div class="score-display" id="score-display"></div>
+        <div class="stats" id="stats-row"></div>
+        <h3>Per-Question Breakdown</h3>
+        <div class="breakdown-table-wrap">
+          <table class="breakdown-table" id="breakdown-table">
+            <thead>
+              <tr>
+                <th>Part</th>
+                <th>Q</th>
+                <th>Student</th>
+                <th>Key</th>
+                <th>Result</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="batch-results" class="results hidden">
+      <div class="card">
+        <h2>Batch Complete</h2>
+        <p id="batch-summary"></p>
+        <a id="batch-download" class="btn primary" href="#" download>Download Excel Report</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Tasks 1–5: QR decode · OCR · Bubble read · Grading · Batch Excel export</p>
+    </div>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

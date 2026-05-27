@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.idea/
+.vscode/
+output/*.xlsx
+!output/AI_Quiz_SP2026_sample_output.xlsx
+*.egg-info/
+.DS_Store
