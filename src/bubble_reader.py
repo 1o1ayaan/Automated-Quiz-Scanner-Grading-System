@@ -15,7 +15,7 @@ OPTIONS = ["A", "B", "C", "D"]
 PART1_COL_BOUNDS = [0.205, 0.375, 0.545, 0.715, 0.885]
 PART2_COL_BOUNDS = [0.10, 0.245, 0.39, 0.535, 0.68]
 UPSCALE_FACTOR = 4
-MIN_FILL_PIXELS = 12
+MIN_FILL_PIXELS = 18
 MULTI_FILL_RATIO = 0.82  # second/top must exceed this to flag multi-fill
 SCORE_CAP = 300  # ignore table-line artifacts in a column
 
@@ -100,7 +100,7 @@ def _column_layout_quality(
     """Score how well a column layout separates filled bubbles (higher is better)."""
     h, w = grid_img.shape[:2]
     clear_rows = 0
-    picks: List[int] = []
+    total_contrast = 0.0
 
     for y1, y2 in rows:
         y1c, y2c = max(0, y1 + 2), min(h, y2 - 2)
@@ -108,12 +108,17 @@ def _column_layout_quality(
             _bubble_fill_score(grid_img[y1c:y2c, int(col_bounds[j] * w) : int(col_bounds[j + 1] * w)])
             for j in range(4)
         ]
-        picks.append(int(np.argmax(scores)))
         ordered = sorted(scores, reverse=True)
-        if ordered[0] >= MIN_FILL_PIXELS and (ordered[0] - ordered[1]) >= 5:
-            clear_rows += 1
+        top, second = ordered[0], ordered[1]
 
-    return clear_rows * 10 + len(set(picks))
+        # Penalize layouts where Column A gets high scores on all rows due to label bleeding
+        if top >= MIN_FILL_PIXELS:
+            contrast = top - second
+            total_contrast += contrast
+            if contrast >= 10:
+                clear_rows += 1
+
+    return clear_rows * 100 + total_contrast
 
 
 def _calibrate_column_bounds(
@@ -131,10 +136,20 @@ def _calibrate_column_bounds(
     rows = _row_boundaries(grid_img)
     candidates: List[List[float]] = [fallback] + [list(p) for p in presets]
 
-    for c0 in np.arange(c0_min, c0_max, 0.005):
-        for cw in np.arange(0.13, 0.22, 0.005):
+    # Dynamically select search range based on Part 1 or Part 2 crop
+    if c0_min < 0.15:
+        # Part 2 OMR grid
+        search_c0_min, search_c0_max = 0.07, 0.11
+        search_cw_min, search_cw_max = 0.160, 0.170
+    else:
+        # Part 1 OMR grid
+        search_c0_min, search_c0_max = 0.20, 0.23
+        search_cw_min, search_cw_max = 0.165, 0.175
+
+    for c0 in np.arange(search_c0_min, search_c0_max + 0.001, 0.005):
+        for cw in np.arange(search_cw_min, search_cw_max + 0.001, 0.005):
             cols = [c0 + i * cw for i in range(5)]
-            if cols[-1] > 0.92:
+            if cols[-1] > 0.95:
                 continue
             candidates.append(cols)
 
@@ -146,6 +161,7 @@ PART1_PRESETS = [
     [0.205, 0.375, 0.545, 0.715, 0.885],
 ]
 PART2_PRESETS = [
+    [0.085, 0.25, 0.415, 0.58, 0.745],
     [0.10, 0.24, 0.38, 0.52, 0.66],
     [0.10, 0.245, 0.39, 0.535, 0.68],
 ]

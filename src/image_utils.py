@@ -91,6 +91,9 @@ def enhance_for_qr(gray: np.ndarray) -> List[np.ndarray]:
         blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 10
     )
     variants.append(adaptive)
+    # Extra robust adaptive thresholding variants for diverse scanner contrasts
+    variants.append(cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 51, 15))
+    variants.append(cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 51, 15))
     return variants
 
 

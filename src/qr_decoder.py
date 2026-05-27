@@ -89,29 +89,31 @@ def decode_answer_key(image_source) -> AnswerKey:
     Tries multiple rotations and preprocessing passes for robustness.
     """
     if isinstance(image_source, str):
-        img = load_image(image_source)
+        img_orig = load_image(image_source)
     else:
-        img = image_source.copy()
+        img_orig = image_source.copy()
 
-    img = resize_max_dimension(img, 2400)
+    # Try different sizes for pyzbar robustness (high res can sometimes cause pyzbar to fail)
+    for max_dim in (2400, 1600, 1200, 800):
+        img = resize_max_dimension(img_orig, max_dim)
+        h, w = img.shape[:2]
 
-    for angle in (0, 90, 180, 270):
-        rotated = rotate_image(img, angle)
-        payload = _decode_from_image(rotated)
-        if payload:
-            key = parse_qr_payload(payload)
-            if angle != 0:
-                key.raw_payload += f" [decoded at {angle}° rotation]"
-            return key
+        for angle in (0, 90, 180, 270):
+            rotated = rotate_image(img, angle)
+            payload = _decode_from_image(rotated)
+            if payload:
+                key = parse_qr_payload(payload)
+                if angle != 0:
+                    key.raw_payload += f" [decoded at {angle}° rotation]"
+                return key
 
-    # Try upper-right crop (QR is typically top-right on quiz sheets)
-    h, w = img.shape[:2]
-    crop = img[0 : int(h * 0.35), int(w * 0.55) : w]
-    for angle in (0, 90, 180, 270):
-        rotated = rotate_image(crop, angle)
-        payload = _decode_from_image(rotated)
-        if payload:
-            return parse_qr_payload(payload)
+        # Try upper-right crop (QR is typically top-right on quiz sheets)
+        crop = img[0 : int(h * 0.35), int(w * 0.55) : w]
+        for angle in (0, 90, 180, 270):
+            rotated = rotate_image(crop, angle)
+            payload = _decode_from_image(rotated)
+            if payload:
+                return parse_qr_payload(payload)
 
     raise ValueError(
         "No QR code found. Ensure the image includes a readable QR code in the top-right."
