@@ -146,8 +146,8 @@ Optional negative marking:
 
 ## Academic Integrity
 
-Built with open-source libraries (OpenCV, EasyOCR, pyzbar, Flask). You should understand and be able to explain each module during demo.
+Built with open-source libraries (OpenCV, EasyOCR, pyzbar, Flask).
 
 ## Author
 
-Submit with your name/reg# in the repository title or README header before submission.
+Ayan(FA24-BSE-005), Abdurrehman(FA24-BSE-001), Syed Muhammad Haziq(FA24-BSE-031).
