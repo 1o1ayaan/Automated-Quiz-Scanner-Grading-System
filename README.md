@@ -61,12 +61,12 @@ quiz-scanner/
 │   └── find_bubble_centers.py    # Calibrate bubble grid coordinates
 │
 ├── samples/                      # Test quiz sheet images (6 real sheets)
-│   ├── sample1.png               # (Abdurrehman — Set A)
-│   ├── sample2.png               # (Atif — Set B)
-│   ├── sample3.png               # (Ayan — Set C)
-│   ├── sample4.png               # (Hamza — Set A)
-│   ├── sample5.png               # (Haziq — Set B)
-│   └── sample6.png               # (Shakeel — Set C)
+│   ├── sample1.png               
+│   ├── sample2.png               
+│   ├── sample3.png               
+│   ├── sample4.png               
+│   ├── sample5.png               
+│   └── sample6.png               
 │
 ├── output/                       # Generated Excel/CSV reports
 ├── demo/                         # Debug visualization output images
@@ -293,21 +293,6 @@ python scripts/debug_visualization.py
 # Test QR decoding with multiple image scales
 python scripts/debug_qr.py
 ```
-
----
-
-## 🧪 Testing — Sample Results
-
-All 6 sample quiz sheets were tested through the full pipeline:
-
-| Sample | Student | Set | Score | Grade |
-|--------|---------|-----|-------|-------|
-| sample1.png | Abdurrehman | A | 12/16 | C |
-| sample2.png | Atif | B | 14/16 | B |
-| sample3.png | Ayan | C | 13/16 | B |
-| sample4.png | Hamza | A | 11/16 | C |
-| sample5.png | Haziq | B | 15/16 | A |
-| sample6.png | Shakeel | C | 10/16 | D |
 
 ---
 
